@@ -10,23 +10,28 @@
       background-color: #f4f4f4;
       color: #222;
       margin: 0;
+      padding: 2rem 1rem;
+    }
+
+    .wrapper {
+      max-width: 800px;
+      margin: auto;
     }
 
     .header-image {
       width: 100%;
       height: auto;
       display: block;
-      border-bottom: 4px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .container {
-      max-width: 800px;
-      margin: auto;
       background: white;
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-      margin-top: -4px;
     }
 
     h1 {
@@ -54,18 +59,20 @@
 </head>
 <body>
 
-  <!-- Ensure the image is uploaded as 'banner.jfif' in the repo -->
-  <img src="headlineImg.png" alt="Header image" class="header-image" />
+  <div class="wrapper">
+    <!-- Replace 'banner.jfif' with your actual filename -->
+    <img src="headlineImg.png" alt="Header image" class="header-image" />
 
-  <div class="container">
-    <h1>Sandvik</h1>
-    <p>Software Platform Architect with 20+ years of experience in mobile and web-based technologies. Works with architecture, frontend modernization, and AI-assisted development tools.</p>
-    <p><strong>Contact & Links:</strong></p>
-    <ul>
-      <li>LinkedIn: <a href="https://www.linkedin.com/in/thomassandvik" target="_blank">linkedin.com/in/thomassandvik</a></li>
-      <li>Personal site: <a href="https://thomassandvik.dk" target="_blank">thomassandvik.dk</a></li>
-      <li>Company: <a href="https://aipops.com" target="_blank">aipops.com</a></li>
-    </ul>
+    <div class="container">
+      <h1>Sandvik</h1>
+      <p>Software Platform Architect with 20+ years of experience in mobile and web-based technologies. Works with architecture, frontend modernization, and AI-assisted development tools.</p>
+   <p><strong>Contact & Links:</strong></p>
+      <ul>
+        <li>LinkedIn: <a href="https://www.linkedin.com/in/thomassandvik" target="_blank">linkedin.com/in/thomassandvik</a></li>
+        <li>Personal site: <a href="https://thomassandvik.dk" target="_blank">thomassandvik.dk</a></li>
+        <li>Company: <a href="https://aipops.com" target="_blank">aipops.com</a></li>
+      </ul>
+    </div>
   </div>
 
 </body>
