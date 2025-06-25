@@ -55,24 +55,100 @@
     a:hover {
       text-decoration: underline;
     }
+
+    .chat-box {
+      margin-top: 2rem;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .chat-log {
+      height: 200px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      background: #f9f9f9;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .chat-input {
+      width: calc(100% - 110px);
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .chat-button {
+      padding: 0.5rem 1rem;
+      background: #0366d6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <div class="wrapper">
-    <!-- Replace 'banner.jfif' with your actual filename -->
     <img src="headImg.png" alt="Header image" class="header-image" />
 
     <div class="container">
-      <p>Software Platform Architect with 20+ years of experience in mobile and web-based technologies. Works with architecture, frontend modernization, and AI-assisted development tools.</p>
-   <p><strong>Contact & Links:</strong></p>
+      <h1>Thomas Sandvik</h1>
+      <p>Senior Software Architect with 20+ years of experience driving innovation across mobile, web, and mission-critical systems. 
+        Currently leading strategic initiatives within frontend architecture at Terma, with a strong focus on developer productivity, UI/UX modernization, and cross-platform consistency.</p>
+
+      <p><strong>Contact & Links:</strong></p>
       <ul>
         <li>LinkedIn: <a href="https://www.linkedin.com/in/thomassandvik" target="_blank">linkedin.com/in/thomassandvik</a></li>
         <li>Personal site: <a href="https://thomassandvik.dk" target="_blank">thomassandvik.dk</a></li>
         <li>Company: <a href="https://aipops.com" target="_blank">aipops.com</a></li>
       </ul>
+
+      <div class="chat-box">
+        <h2>Spørg Thomas</h2>
+        <div class="chat-log" id="chat-log"></div>
+        <input type="text" id="chat-input" class="chat-input" placeholder="Stil et spørgsmål..." />
+        <button class="chat-button" onclick="askThomas()">Send</button>
+      </div>
     </div>
   </div>
+
+  <script>
+    async function askThomas() {
+      const input = document.getElementById("chat-input");
+      const log = document.getElementById("chat-log");
+      const question = input.value.trim();
+      if (!question) return;
+
+      log.innerHTML += `<div><strong>Du:</strong> ${question}</div>`;
+      input.value = "";
+
+      // Simuleret svar logik
+      const responses = {
+        "hvad arbejder du med": "Jeg arbejder som Senior Software Architect med fokus på frontend, AI-integration og arkitektur for React og React Native.",
+        "hvad er din baggrund": "Jeg har over 20 års erfaring inden for softwareudvikling, især med mobil- og webteknologier.",
+        "hvad laver du med ai": "Jeg har lavet AI-prototyper som semantisk søgning og brugsmønsteranalyse, og arbejder med at integrere AI i udviklingsværktøjer.",
+        "hvad er din rolle": "Jeg leder arkitekturinitiativer uden formel ledelsesrolle og koordinerer på tværs af teams."
+      };
+
+      let answer = "Det ved jeg desværre ikke endnu – prøv at spørge på en anden måde.";
+      for (const key in responses) {
+        if (question.toLowerCase().includes(key)) {
+          answer = responses[key];
+          break;
+        }
+      }
+
+      setTimeout(() => {
+        log.innerHTML += `<div><strong>Thomas:</strong> ${answer}</div>`;
+        log.scrollTop = log.scrollHeight;
+      }, 500);
+    }
+  </script>
 
 </body>
 </html>
