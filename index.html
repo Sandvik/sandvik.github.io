@@ -56,7 +56,6 @@
       text-decoration: underline;
     }
 
-    /* Floating chat button */
     .chat-toggle {
       position: fixed;
       bottom: 20px;
@@ -148,9 +147,10 @@
   </div>
 
   <script>
-    let memory = [];
+    let memory = JSON.parse(localStorage.getItem("chatMemory") || "[]");
+    let learnedResponses = JSON.parse(localStorage.getItem("learnedResponses") || "[]");
 
-    const responses = [
+    const predefined = [
       {
         keywords: ["hvad arbejder du med", "hvad laver du"],
         reply: "Jeg arbejder som Senior Software Architect med fokus på frontend, AI-integration og arkitektur for React og React Native."
@@ -171,12 +171,12 @@
 
     function getResponse(question) {
       const q = question.toLowerCase();
-      for (const r of responses) {
+      for (const r of [...predefined, ...learnedResponses]) {
         for (const keyword of r.keywords) {
           if (q.includes(keyword)) return r.reply;
         }
       }
-      return dynamicResponse(question);
+      return null;
     }
 
     function dynamicResponse(question) {
@@ -185,7 +185,7 @@
       } else if (question.includes("fremtiden")) {
         return "Jeg arbejder på at fremtidssikre Terma med AI-strategi og moderne referencearkitektur for mobil og web.";
       } else {
-        return "Det har jeg ikke tænkt så meget over – kan du uddybe dit spørgsmål?";
+        return `Det har jeg ikke tænkt så meget over – hvad tænker du selv om "${question}"?`;
       }
     }
 
@@ -197,9 +197,16 @@
 
       log.innerHTML += `<div><strong>Du:</strong> ${question}</div>`;
       memory.push(question);
+      localStorage.setItem("chatMemory", JSON.stringify(memory));
       input.value = "";
 
-      const answer = getResponse(question);
+      let answer = getResponse(question);
+      if (!answer) {
+        answer = dynamicResponse(question);
+        // Lær nyt spørgsmål
+        learnedResponses.push({ keywords: [question.toLowerCase()], reply: answer });
+        localStorage.setItem("learnedResponses", JSON.stringify(learnedResponses));
+      }
 
       setTimeout(() => {
         log.innerHTML += `<div><strong>Thomas:</strong> ${answer}</div>`;
