@@ -56,33 +56,61 @@
       text-decoration: underline;
     }
 
+    /* Floating chat button */
+    .chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #0366d6;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
     .chat-box {
-      margin-top: 2rem;
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: white;
       border: 1px solid #ccc;
-      padding: 1rem;
       border-radius: 8px;
-      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
     }
 
     .chat-log {
-      height: 200px;
+      flex: 1;
       overflow-y: auto;
-      margin-bottom: 1rem;
-      background: #f9f9f9;
       padding: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid #ddd;
+      background: #f9f9f9;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .chat-controls {
+      display: flex;
+      padding: 0.5rem;
     }
 
     .chat-input {
-      width: calc(100% - 110px);
+      flex: 1;
       padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
 
     .chat-button {
-      padding: 0.5rem 1rem;
+      margin-left: 0.5rem;
+      padding: 0.5rem 0.75rem;
       background: #0366d6;
       color: white;
       border: none;
@@ -98,8 +126,7 @@
 
     <div class="container">
       <h1>Thomas Sandvik</h1>
-      <p>Senior Software Architect with 20+ years of experience driving innovation across mobile, web, and mission-critical systems. 
-        Currently leading strategic initiatives within frontend architecture at Terma, with a strong focus on developer productivity, UI/UX modernization, and cross-platform consistency.</p>
+      <p>Senior Software Architect with 20+ years of experience driving innovation across mobile, web, and mission-critical systems. Currently leading strategic initiatives within AI-driven frontend architecture at Terma, with a strong focus on developer productivity, UI/UX modernization, and cross-platform consistency.</p>
 
       <p><strong>Contact & Links:</strong></p>
       <ul>
@@ -107,46 +134,82 @@
         <li>Personal site: <a href="https://thomassandvik.dk" target="_blank">thomassandvik.dk</a></li>
         <li>Company: <a href="https://aipops.com" target="_blank">aipops.com</a></li>
       </ul>
+    </div>
+  </div>
 
-      <div class="chat-box">
-        <h2>Spørg Thomas</h2>
-        <div class="chat-log" id="chat-log"></div>
-        <input type="text" id="chat-input" class="chat-input" placeholder="Stil et spørgsmål..." />
-        <button class="chat-button" onclick="askThomas()">Send</button>
-      </div>
+  <button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+  <div class="chat-box" id="chatBox">
+    <div class="chat-log" id="chat-log"></div>
+    <div class="chat-controls">
+      <input type="text" id="chat-input" class="chat-input" placeholder="Spørg Thomas..." />
+      <button class="chat-button" onclick="askThomas()">▶</button>
     </div>
   </div>
 
   <script>
-    async function askThomas() {
+    let memory = [];
+
+    const responses = [
+      {
+        keywords: ["hvad arbejder du med", "hvad laver du"],
+        reply: "Jeg arbejder som Senior Software Architect med fokus på frontend, AI-integration og arkitektur for React og React Native."
+      },
+      {
+        keywords: ["baggrund", "uddannelse", "erfaring"],
+        reply: "Jeg har over 20 års erfaring med softwareudvikling – primært mobil, web og kritiske systemer."
+      },
+      {
+        keywords: ["ai", "kunstig intelligens"],
+        reply: "Jeg leder AI-initiativer med fokus på frontend, udviklerværktøjer og komponentintegration. Jeg har bl.a. lavet semantisk søgning og skærmmønsteranalyse."
+      },
+      {
+        keywords: ["rolle", "position"],
+        reply: "Jeg er arkitekt uden formel ledelsesrolle – jeg sikrer governance, strategi og retning på tværs af frontend-udvikling."
+      }
+    ];
+
+    function getResponse(question) {
+      const q = question.toLowerCase();
+      for (const r of responses) {
+        for (const keyword of r.keywords) {
+          if (q.includes(keyword)) return r.reply;
+        }
+      }
+      return dynamicResponse(question);
+    }
+
+    function dynamicResponse(question) {
+      if (question.includes("træning")) {
+        return "Jeg træner 3 gange om ugen – vægttræning og kajak. Det giver både energi og fokus.";
+      } else if (question.includes("fremtiden")) {
+        return "Jeg arbejder på at fremtidssikre Terma med AI-strategi og moderne referencearkitektur for mobil og web.";
+      } else {
+        return "Det har jeg ikke tænkt så meget over – kan du uddybe dit spørgsmål?";
+      }
+    }
+
+    function askThomas() {
       const input = document.getElementById("chat-input");
       const log = document.getElementById("chat-log");
       const question = input.value.trim();
       if (!question) return;
 
       log.innerHTML += `<div><strong>Du:</strong> ${question}</div>`;
+      memory.push(question);
       input.value = "";
 
-      // Simuleret svar logik
-      const responses = {
-        "hvad arbejder du med": "Jeg arbejder som Senior Software Architect med fokus på frontend, AI-integration og arkitektur for React og React Native.",
-        "hvad er din baggrund": "Jeg har over 20 års erfaring inden for softwareudvikling, især med mobil- og webteknologier.",
-        "hvad laver du med ai": "Jeg har lavet AI-prototyper som semantisk søgning og brugsmønsteranalyse, og arbejder med at integrere AI i udviklingsværktøjer.",
-        "hvad er din rolle": "Jeg leder arkitekturinitiativer uden formel ledelsesrolle og koordinerer på tværs af teams."
-      };
-
-      let answer = "Det ved jeg desværre ikke endnu – prøv at spørge på en anden måde.";
-      for (const key in responses) {
-        if (question.toLowerCase().includes(key)) {
-          answer = responses[key];
-          break;
-        }
-      }
+      const answer = getResponse(question);
 
       setTimeout(() => {
         log.innerHTML += `<div><strong>Thomas:</strong> ${answer}</div>`;
         log.scrollTop = log.scrollHeight;
-      }, 500);
+      }, 400);
+    }
+
+    function toggleChat() {
+      const chatBox = document.getElementById("chatBox");
+      chatBox.style.display = chatBox.style.display === "none" || chatBox.style.display === "" ? "flex" : "none";
     }
   </script>
 
