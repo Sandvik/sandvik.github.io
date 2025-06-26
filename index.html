@@ -1,16 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sandvik – Software & AI Architecture</title>
+  <title>Sandvik – Chat</title>
   <style>
+    :root {
+      --primary-color: #0366d6;
+      --primary-dark: #0052cc;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --light-bg: #fafbfc;
+      --border-color: #e1e4e8;
+      --text-primary: #24292e;
+      --text-secondary: #586069;
+      --shadow-medium: 0 4px 12px rgba(0,0,0,0.15);
+      --shadow-heavy: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      background-color: #f4f4f4;
-      color: #222;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-primary);
       margin: 0;
       padding: 2rem 1rem;
+      min-height: 100vh;
     }
 
     .wrapper {
@@ -22,25 +36,32 @@
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 8px;
+      border-radius: 12px;
       margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-medium);
     }
 
     .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-heavy);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       margin-bottom: 0.5em;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     p {
-      line-height: 1.6;
+      line-height: 1.7;
+      color: var(--text-secondary);
     }
 
     ul {
@@ -48,73 +69,302 @@
     }
 
     a {
-      color: #0366d6;
+      color: var(--primary-color);
       text-decoration: none;
+      transition: all 0.2s ease;
     }
 
     a:hover {
+      color: var(--primary-dark);
       text-decoration: underline;
     }
 
     .chat-toggle {
       position: fixed;
       bottom: 20px;
-      left: 20px;
-      background-color: #0366d6;
+      right: 5px;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       color: white;
       border: none;
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 24px;
+      width: 30px;
+      height: 30px;
+      font-size: 12px;
       cursor: pointer;
       z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-heavy);
+      animation: bounceAttention 3s infinite;
+      overflow: hidden;
+    }
+
+    .chat-toggle::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 2s infinite;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 8px 25px rgba(3, 102, 214, 0.4);
+      animation: bounceHover 0.6s infinite alternate;
+    }
+
+    @keyframes bounceAttention {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      10% {
+        transform: translateY(-8px) scale(1.05);
+      }
+      30% {
+        transform: translateY(-4px) scale(1.02);
+      }
+      60% {
+        transform: translateY(-2px) scale(1.01);
+      }
+    }
+
+    @keyframes bounceHover {
+      0% {
+        transform: scale(1.15) rotate(5deg) translateY(0);
+      }
+      100% {
+        transform: scale(1.2) rotate(-5deg) translateY(-3px);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+      50% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
     }
 
     .chat-box {
       display: none;
       position: fixed;
-      bottom: 90px;
-      left: 20px;
+      bottom: 60px;
+      right: 5px;
       width: 300px;
-      max-height: 400px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      height: 300px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      box-shadow: var(--shadow-heavy);
       z-index: 999;
-      display: flex;
       flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      border-radius: 15px 15px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .chat-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .status-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success-color);
     }
 
     .chat-log {
       flex: 1;
       overflow-y: auto;
-      padding: 0.5rem;
-      background: #f9f9f9;
-      border-bottom: 1px solid #ddd;
+      padding: 0.75rem;
+      background: var(--light-bg);
+    }
+
+    .chat-log::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-log::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+
+    .chat-message {
+      margin-bottom: 0.75rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .user-message {
+      text-align: right;
+    }
+
+    .message-bubble {
+      display: inline-block;
+      padding: 0.5rem 0.75rem;
+      word-wrap: break-word;
+      max-width: 85%;
+      position: relative;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .user-message .message-bubble {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      border-radius: 12px 12px 4px 12px;
+    }
+
+    .bot-message .message-bubble {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 12px 12px 12px 4px;
+    }
+
+    .message-timestamp {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+      margin-top: 0.2rem;
+    }
+
+    .typing-indicator {
+      display: none;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .thinking-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .thinking-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      animation: thinkingDots 1.4s infinite;
+    }
+
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes thinkingDots {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
     }
 
     .chat-controls {
       display: flex;
-      padding: 0.5rem;
+      padding: 0.75rem;
+      background: white;
+      border-top: 1px solid var(--border-color);
+      gap: 0.5rem;
+      border-radius: 0 0 15px 15px;
     }
 
     .chat-input {
       flex: 1;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+      outline: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      background: var(--light-bg);
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary-color);
+      background: white;
+      box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.1);
+    }
+
+    .chat-input:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .chat-button {
-      margin-left: 0.5rem;
       padding: 0.5rem 0.75rem;
-      background: #0366d6;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 15px;
       cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      min-width: 40px;
+      font-size: 0.8rem;
+    }
+
+    .chat-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .chat-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 480px) {
+      .chat-box {
+        width: calc(100vw - 40px);
+        left: 20px;
+        right: 20px;
+        height: 350px;
+        bottom: 80px;
+      }
+
+      .chat-toggle {
+        bottom: 15px;
+        right: 5px;
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
@@ -125,6 +375,8 @@
 
     <div class="container">
       <h1>Thomas Sandvik</h1>
+      <p>Senior Software Architect with 20+ years of experience driving innovation across mobile, web, and mission-critical systems. Currently leading strategic initiatives within frontend architecture at Terma, with a strong focus on developer productivity, UI/UX modernization, and cross-platform consistency.</p>
+
       <p><strong>Contact & Links:</strong></p>
       <ul>
         <li>LinkedIn: <a href="https://www.linkedin.com/in/thomassandvik" target="_blank">linkedin.com/in/thomassandvik</a></li>
@@ -134,6 +386,311 @@
     </div>
   </div>
 
-  
+  <button class="chat-toggle" id="chatToggle">
+    🚀
+  </button>
+
+  <div class="chat-box" id="chatBox">
+    <div class="chat-header">
+      <div>🚀 Chat</div>
+      <div class="chat-status">
+        <div class="status-indicator" id="statusIndicator"></div>       
+      </div>
+    </div>
+    
+    <div class="chat-log" id="chat-log"></div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      <span>Typing...</span>
+      <div class="thinking-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    
+    <div class="chat-controls">
+      <input type="text" id="chat-input" class="chat-input" placeholder="Type message..." />
+      <button class="chat-button" id="sendButton">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let knowledge = [];
+    let chatHistory = [];
+    let isTyping = false;
+    let chatVisible = false;
+
+    // Knowledge base
+    const knowledgeBase = [
+      {
+        q: 'what work job position role workplace',
+        a: 'I am a Senior Software Architect at Terma in Søborg, where I drive strategic initiatives across frontend, mobile and AI. I have architectural responsibility for mission-critical C2 applications and work closely with development teams and other architects.',
+        keywords: ['work', 'job', 'position', 'terma', 'architect', 'frontend', 'ai', 'mobile']
+      },
+      {
+        q: 'background experience career history education',
+        a: 'I have 20+ years of experience in software development – from iOS to architecture for large systems. I have deep experience with iOS, React/React Native, UI/UX and have moved from mobile development to strategic architecture.',
+        keywords: ['background', 'experience', 'career', 'history', 'react', 'development', 'mobile']
+      },
+      {
+        q: 'projects development technology innovation',
+        a: 'My current focus areas are: AI-driven developer support, semantic search in help systems, screen analysis for UI optimization, and a new reference architecture for web/mobile. I lead PoCs that concretely improve our platform.',
+        keywords: ['projects', 'development', 'technology', 'innovation', 'ai', 'automation', 'platform']
+      },
+      {
+        q: 'future vision plans goals strategy',
+        a: 'My work is to future-proof Terma\'s software platforms through AI, modern architecture and strong developer tools. I work to create direction and engagement across teams.',
+        keywords: ['future', 'vision', 'plans', 'strategy', 'ai', 'leadership', 'platform']
+      },
+      {
+        q: 'training exercise sport fitness kayak weightlifting balance',
+        a: 'I train 3 times a week – weightlifting and kayaking in summer, rowing machine in winter.',
+        keywords: ['training', 'sport', 'kayak', 'weightlifting', 'energy', 'diet', 'balance']
+      }
+    ];
+
+    // Initialize
+    function initialize() {
+      knowledge = knowledgeBase;
+      enableChat();
+      addWelcomeMessage();
+    }
+
+    function enableChat() {
+      const input = document.getElementById('chat-input');
+      const button = document.getElementById('sendButton');
+      
+      if (input) {
+        input.disabled = false;
+      }
+      if (button) {
+        button.disabled = false;
+      }
+    }
+
+    function addWelcomeMessage() {
+      addMessage('Hi! Ask me about Thomas or his work 👋', false);
+    }
+
+    // Find answer
+    function findAnswer(question) {
+      const q = question.toLowerCase().trim();
+      
+      // Special cases first (but more specific)
+      if ((q.includes('hi') || q.includes('hello') || q.includes('hey')) && q.length < 10) {
+        return 'Hi! 👋 I\'m Thomas\' chatbot. Ask me about his work, projects and experience!';
+      }
+      
+      if (q.includes('thank') || q.includes('thanks')) {
+        return 'You\'re welcome! 😊 Do you have more questions about Thomas\' work or projects?';
+      }
+      
+      let bestMatch = { score: 0, answer: '', index: -1 };
+      
+      for (let i = 0; i < knowledge.length; i++) {
+        const item = knowledge[i];
+        let score = 0;
+        
+        // Direct content matching
+        if (q.includes('experience') || q.includes('background') || q.includes('career') || q.includes('history')) {
+          if (item.keywords.includes('experience') || item.keywords.includes('background') || item.keywords.includes('career')) {
+            score += 20;
+          }
+        }
+        
+        if (q.includes('work') || q.includes('job') || q.includes('position') || q.includes('role')) {
+          if (item.keywords.includes('work') || item.keywords.includes('job') || item.keywords.includes('position')) {
+            score += 20;
+          }
+        }
+        
+        if (q.includes('project') || q.includes('development') || q.includes('technology') || q.includes('innovation')) {
+          if (item.keywords.includes('projects') || item.keywords.includes('development') || item.keywords.includes('technology')) {
+            score += 20;
+          }
+        }
+        
+        if (q.includes('future') || q.includes('vision') || q.includes('plan') || q.includes('goal') || q.includes('strategy')) {
+          if (item.keywords.includes('future') || item.keywords.includes('vision') || item.keywords.includes('plans') || item.keywords.includes('strategy')) {
+            score += 20;
+          }
+        }
+        
+        if (q.includes('training') || q.includes('exercise') || q.includes('sport') || q.includes('fitness') || q.includes('workout')) {
+          if (item.keywords.includes('training') || item.keywords.includes('sport')) {
+            score += 20;
+          }
+        }
+        
+        // Keyword matching
+        for (const keyword of item.keywords) {
+          if (q.includes(keyword)) {
+            score += 10;
+          }
+        }
+        
+        // Question pattern matching
+        const questionWords = item.q.split(' ');
+        for (const word of questionWords) {
+          if (word.length > 3 && q.includes(word)) {
+            score += 5;
+          }
+        }
+        
+        if (score > bestMatch.score) {
+          bestMatch = { score, answer: item.a, index: i };
+        }
+      }
+      
+      console.log('Question:', q, 'Best match score:', bestMatch.score, 'Answer:', bestMatch.answer.substring(0, 50));
+      
+      if (bestMatch.score >= 10) {
+        return bestMatch.answer;
+      }
+      
+      return 'Interesting question! 🤔 I can best help with questions about Thomas\' work with frontend architecture, his projects at Terma, his experience, or his approach to work-life balance. What would you like to know? Please ask in English.';
+    }
+
+    // UI Functions
+    function addMessage(content, isUser = false) {
+      const chatLog = document.getElementById('chat-log');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${isUser ? 'user-message' : 'bot-message'}`;
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'message-bubble';
+      bubbleDiv.textContent = content;
+      
+      messageDiv.appendChild(bubbleDiv);
+      
+      const timestampDiv = document.createElement('div');
+      timestampDiv.className = 'message-timestamp';
+      timestampDiv.textContent = new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      messageDiv.appendChild(timestampDiv);
+      
+      chatLog.appendChild(messageDiv);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) {
+        indicator.style.display = 'flex';
+        const chatLog = document.getElementById('chat-log');
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+    }
+
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) {
+        indicator.style.display = 'none';
+      }
+    }
+
+    // Main chat function
+    async function sendMessage() {
+      if (isTyping) return;
+      
+      const input = document.getElementById('chat-input');
+      const sendButton = document.getElementById('sendButton');
+      const question = input.value.trim();
+      
+      if (!question) return;
+
+      chatHistory.push({ speaker: 'user', text: question, timestamp: Date.now() });
+
+      // Add user message
+      addMessage(question, true);
+      input.value = '';
+      
+      // Show typing indicator
+      isTyping = true;
+      sendButton.disabled = true;
+      showTypingIndicator();
+
+      try {
+        // Realistic response time
+        const responseTime = Math.min(1500, question.length * 30 + 400);
+        await new Promise(resolve => setTimeout(resolve, responseTime));
+
+        // Get response
+        const answer = findAnswer(question);
+        
+        // Hide typing and show response
+        hideTypingIndicator();
+        addMessage(answer, false);
+        
+        chatHistory.push({ 
+          speaker: 'bot', 
+          text: answer, 
+          timestamp: Date.now() 
+        });
+        
+      } catch (error) {
+        console.error('Error:', error);
+        hideTypingIndicator();
+        addMessage('An error occurred. Please try again! 🤖', false);
+      } finally {
+        isTyping = false;
+        sendButton.disabled = false;
+        input.focus();
+      }
+    }
+
+    // Chat toggle function
+    function toggleChat() {
+      const chatBox = document.getElementById('chatBox');
+      chatVisible = !chatVisible;
+      
+      if (chatVisible) {
+        chatBox.style.display = 'flex';
+        setTimeout(() => {
+          const input = document.getElementById('chat-input');
+          if (input && !input.disabled) input.focus();
+        }, 100);
+      } else {
+        chatBox.style.display = 'none';
+      }
+    }
+
+    // Event listeners
+    function initializeEventListeners() {
+      const chatToggle = document.getElementById('chatToggle');
+      const sendButton = document.getElementById('sendButton');
+      const chatInput = document.getElementById('chat-input');
+      
+      if (chatToggle) {
+        chatToggle.addEventListener('click', toggleChat);
+      }
+
+      if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+      }
+      
+      if (chatInput) {
+        chatInput.addEventListener('keypress', function(event) {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+          }
+        });
+      }
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Starting chat initialization...');
+      initializeEventListeners();
+      initialize();
+    });
+
+  </script>
+
 </body>
 </html>
